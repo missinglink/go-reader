@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 type FileReader struct {
@@ -40,6 +41,12 @@ func NewFileReader(ctx context.Context, uri string) (Reader, error) {
 	}
 
 	root := u.Path
+	base := filepath.Base(root)
+
+	if strings.ToUpper(base) == "STDIN" {
+		return NewReader(ctx, "stdin://")
+	}
+	
 	info, err := os.Stat(root)
 
 	if err != nil {
